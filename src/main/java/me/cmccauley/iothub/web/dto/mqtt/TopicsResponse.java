@@ -1,4 +1,4 @@
-package me.cmccauley.iothub.dto.mqtt;
+package me.cmccauley.iothub.web.dto.mqtt;
 
 import java.util.Collection;
 

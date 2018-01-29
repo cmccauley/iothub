@@ -1,4 +1,4 @@
-package me.cmccauley.iothub.dto;
+package me.cmccauley.iothub.web.dto.admin;
 
 public class User {
     private Long id;

@@ -1,6 +1,6 @@
-package me.cmccauley.iothub.api;
+package me.cmccauley.iothub.web.api;
 
-import me.cmccauley.iothub.dto.User;
+import me.cmccauley.iothub.web.dto.admin.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

@@ -1,8 +1,9 @@
-package me.cmccauley.iothub.dto.mqtt;
+package me.cmccauley.iothub.web.dto.mqtt;
 
 public class PublishRequest {
 
     private String message;
+    private String channel;
 
     public PublishRequest(){}
 
@@ -12,5 +13,13 @@ public class PublishRequest {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 }

@@ -1,4 +1,4 @@
-package me.cmccauley.iothub.api;
+package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.services.mqtt.MqttService;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,8 +31,9 @@ public class HubController {
     }
 
     @RequestMapping("/publish")
-    public String publish() {
-       return "";
+    public String publish() throws MqttException {
+        mqttService.publish("hello", "world");
+        return "";
     }
 
     @RequestMapping("/subscribe")
