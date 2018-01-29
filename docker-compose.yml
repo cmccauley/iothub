@@ -1,0 +1,12 @@
+version: '3'
+services:
+  hub:
+    image: cmccauley/iot:0.0.1
+    ports:
+     - "8080:8080"
+    links:
+     - mqtt   
+  mqtt:
+    image: eclipse-mosquitto
+    ports:
+      - "1884:1883"
