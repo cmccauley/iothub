@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 
 const char *ssid = "ASUSX";
-const char *password = "thisIsSparta";
+const char *password = "";
 const char *mqttServer = "192.168.1.181";
 const int mqttPort = 1883;
 const char *mqttUser = "bob";
