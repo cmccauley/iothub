@@ -1,6 +1,5 @@
 package me.cmccauley.iothub.services.mqtt.messages.impl;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import me.cmccauley.iothub.devices.led.Led;
 import me.cmccauley.iothub.services.mqtt.messages.HubMqttMessage;
 import org.springframework.beans.factory.annotation.Value;
