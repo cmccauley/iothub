@@ -2,11 +2,11 @@ package me.cmccauley.iothub.devices.led;
 
 public class Led {
     private int id;
-    private String hue;
-    private String saturation;
-    private String value;
+    private int hue;
+    private int saturation;
+    private int value;
 
-    public Led(int id, String hue, String saturation, String value) {
+    public Led(int id, int hue, int saturation, int value) {
         this.id = id;
         this.hue = hue;
         this.saturation = saturation;
@@ -21,27 +21,32 @@ public class Led {
         this.id = id;
     }
 
-    public String getHue() {
+    public int getHue() {
         return hue;
     }
 
-    public void setHue(String hue) {
+    public void setHue(int hue) {
         this.hue = hue;
     }
 
-    public String getSaturation() {
+    public int getSaturation() {
         return saturation;
     }
 
-    public void setSaturation(String saturation) {
+    public void setSaturation(int saturation) {
         this.saturation = saturation;
     }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%d,%d,%d,%d", id, hue, saturation, value);
     }
 }

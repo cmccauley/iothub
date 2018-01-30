@@ -1,7 +1,8 @@
 package me.cmccauley.iothub.services.mqtt.messages;
 
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import java.util.List;
 
 public interface HubMqttMessage {
-    String[] getMessages();
+
+    List<String> getMessages();
 }

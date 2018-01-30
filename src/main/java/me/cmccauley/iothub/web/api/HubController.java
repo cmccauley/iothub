@@ -32,7 +32,6 @@ public class HubController {
 
     @RequestMapping("/publish")
     public String publish() throws MqttException {
-        mqttService.publish("hello", "world");
         return "";
     }
 

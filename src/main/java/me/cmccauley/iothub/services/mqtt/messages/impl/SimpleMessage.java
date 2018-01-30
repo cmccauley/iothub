@@ -2,6 +2,9 @@ package me.cmccauley.iothub.services.mqtt.messages.impl;
 
 import me.cmccauley.iothub.services.mqtt.messages.HubMqttMessage;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SimpleMessage implements HubMqttMessage{
 
     private String message;
@@ -15,7 +18,7 @@ public class SimpleMessage implements HubMqttMessage{
     }
 
     @Override
-    public String[] getMessages() {
-        return new String[] {message};
+    public List<String> getMessages() {
+        return Collections.singletonList(message);
     }
 }
