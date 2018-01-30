@@ -13,7 +13,7 @@ public class LedMessage implements HubMqttMessage {
     private List<Led> leds;
 
     @Value("${message.max_size}")
-    private int MAX_SIZE = 50;
+    private int MAX_SIZE = 100;
 
     private final String DELIMITER = ";";
 

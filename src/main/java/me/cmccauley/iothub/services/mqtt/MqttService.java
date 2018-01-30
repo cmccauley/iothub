@@ -32,9 +32,7 @@ public class MqttService {
         message.getMessages().forEach(msg -> {
             try {
                 System.out.println(msg);
-                if(false){
-                    mqttClient.publish(topic, new MqttMessage(msg.getBytes()));
-                }
+                mqttClient.publish(topic, new MqttMessage(msg.getBytes()));
             } catch (MqttException e) {
                 e.printStackTrace();
             }

@@ -23,7 +23,7 @@ public class LedController {
         // That is lit !
 
         List<Led> leds = new ArrayList<>();
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 151; i++) {
             Led l = new Led(i, (i * i) % 255, 255, 50);
             leds.add(l);
         }
@@ -31,7 +31,7 @@ public class LedController {
         LedMessage message = new LedMessage();
         message.setLeds(leds);
 
-        mqttService.publish("/livingroom/leds", message);
+        mqttService.publish("esp/test", message);
         return "that was lit";
     }
 }

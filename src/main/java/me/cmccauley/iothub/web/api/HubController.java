@@ -24,12 +24,6 @@ public class HubController {
         }
     }
 
-    @RequestMapping("/leds")
-    public String leds()
-    {
-      return "";
-    }
-
     @RequestMapping("/publish")
     public String publish() throws MqttException {
         return "";
