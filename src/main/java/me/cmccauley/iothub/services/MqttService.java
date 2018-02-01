@@ -34,7 +34,7 @@ public class MqttService {
         mqttClient.connect(mqttConnectOptions);
     }
 
-    public void publish(String topic, HubMqttMessage message) throws MqttException {
+    public void publish(String topic, HubMqttMessage message) {
         message.getMessages().forEach(msg -> {
             try {
                 System.out.println(msg);
