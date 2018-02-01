@@ -6,7 +6,16 @@ services:
      - "8080:8080"
     links:
      - mqtt   
+  
   mqtt:
     image: eclipse-mosquitto
     ports:
       - "1884:1883"
+    links:
+     - db
+     
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme

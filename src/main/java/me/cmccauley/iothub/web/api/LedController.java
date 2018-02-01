@@ -1,8 +1,8 @@
 package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.devices.led.Led;
-import me.cmccauley.iothub.services.mqtt.MqttService;
-import me.cmccauley.iothub.services.mqtt.messages.impl.LedMessage;
+import me.cmccauley.iothub.services.MqttService;
+import me.cmccauley.iothub.mqtt.messages.impl.LedMessage;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/led")
 public class LedController {
 
+    private final MqttService mqttService;
+
     @Autowired
-    private MqttService mqttService;
+    public LedController(MqttService mqttService) {
+        this.mqttService = mqttService;
+    }
 
     @RequestMapping("/lit")
     public String lit() throws MqttException {

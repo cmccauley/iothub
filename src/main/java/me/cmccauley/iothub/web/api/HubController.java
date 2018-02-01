@@ -1,6 +1,6 @@
 package me.cmccauley.iothub.web.api;
 
-import me.cmccauley.iothub.services.mqtt.MqttService;
+import me.cmccauley.iothub.services.MqttService;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

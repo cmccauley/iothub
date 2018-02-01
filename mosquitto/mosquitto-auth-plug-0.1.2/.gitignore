@@ -1,0 +1,10 @@
+np
+*.swp
+*.o
+*.so
+*.pyc
+jp*.conf
+Makefile
+*.a
+config.mk
+sundry

@@ -17,8 +17,7 @@ public class Subscription {
     @Column(name = "active")
     private boolean active;
 
-    public Subscription(Long id, String topic, boolean active) {
-        this.id = id;
+    public Subscription(String topic, boolean active) {
         this.topic = topic;
         this.active = active;
     }
