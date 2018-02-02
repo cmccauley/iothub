@@ -31,6 +31,7 @@ public class MqttService {
 
     public void start() throws MqttException {
         mqttClient.setCallback(defaultCallback);
+        mqttClient.subscribe("#");
         mqttClient.connect(mqttConnectOptions);
     }
 

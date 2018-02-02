@@ -20,17 +20,12 @@ public class HubController {
             return "success";
         } catch (MqttException e) {
             e.printStackTrace();
-            return "fuck";
+            return "failed";
         }
     }
 
     @RequestMapping("/publish")
     public String publish() throws MqttException {
-        return "";
-    }
-
-    @RequestMapping("/subscribe")
-    public String subscribe() {
         return "";
     }
 
