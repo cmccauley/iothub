@@ -27,6 +27,7 @@ public class DefaultCallback implements MqttCallback {
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         System.out.println("Message received:\n\t" + new String(mqttMessage.getPayload()));
         mqttLogService.addLog(new MqttLog(topic,new String(mqttMessage.getPayload())));
+
     }
 
     @Override
