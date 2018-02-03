@@ -1,0 +1,9 @@
+FROM eclipse-mosquitto
+
+VOLUME /mosquitto
+
+
+EXPOSE 1883
+
+#ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/sbin/mosquitto"]
