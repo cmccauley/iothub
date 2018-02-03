@@ -1,7 +1,0 @@
-FROM eclipse-mosquitto
-COPY mosquitto-auth-plug-0.1.2 /plugins
-
-EXPOSE 1883
-
-#ENTRYPOINT ["/docker-entrypoint.sh"]
-ENTRYPOINT ["/usr/sbin/mosquitto"]
