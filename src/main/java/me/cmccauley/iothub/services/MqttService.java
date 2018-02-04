@@ -3,10 +3,7 @@ package me.cmccauley.iothub.services;
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
 import me.cmccauley.iothub.mqtt.DefaultCallback;
 import me.cmccauley.iothub.mqtt.messages.HubMqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +12,21 @@ public class MqttService {
 
     private final MqttClient mqttClient;
 
-    private final DefaultCallback defaultCallback;
-
-    private final MqttConnectOptions mqttConnectOptions;
+    private final MqttCallback defaultCallback;
 
     private final SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    public MqttService(MqttClient mqttClient, DefaultCallback defaultCallback, MqttConnectOptions mqttConnectOptions, SubscriptionRepository subscriptionRepository) {
+    public MqttService(MqttClient mqttClient, MqttCallback defaultCallback, SubscriptionRepository subscriptionRepository) {
         this.mqttClient = mqttClient;
         this.defaultCallback = defaultCallback;
-        this.mqttConnectOptions = mqttConnectOptions;
         this.subscriptionRepository = subscriptionRepository;
     }
 
     public void start() throws MqttException {
         mqttClient.setCallback(defaultCallback);
+        mqttClient.connect();
         mqttClient.subscribe("#");
-        mqttClient.connect(mqttConnectOptions);
     }
 
     public void publish(String topic, HubMqttMessage message) {
@@ -50,13 +44,10 @@ public class MqttService {
         return mqttClient;
     }
 
-    public DefaultCallback getDefaultCallback() {
+    public MqttCallback getDefaultCallback() {
         return defaultCallback;
     }
 
-    public MqttConnectOptions getMqttConnectOptions() {
-        return mqttConnectOptions;
-    }
 
     public SubscriptionRepository getSubscriptionRepository() {
         return subscriptionRepository;

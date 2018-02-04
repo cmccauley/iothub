@@ -1,13 +1,12 @@
 package me.cmccauley.iothub.data.models;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
 @Table(name = "subscription", schema = "iothub")
-public class MqttLog {
+public class MqttMessage {
 
     @Id
     @Column(name = "id")
@@ -21,12 +20,12 @@ public class MqttLog {
     private String message;
 
     @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private Date created_at;
+    private Timestamp arrived_at;
 
-    public MqttLog(String topic, String message) {
+    public MqttMessage(String topic, String message) {
         this.topic = topic;
         this.message = message;
+        this.arrived_at = new Timestamp(System.currentTimeMillis());
     }
 
     public Long getId() {
@@ -53,11 +52,7 @@ public class MqttLog {
         this.message = message;
     }
 
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public Date getArrived_at() {
+        return arrived_at;
     }
 }

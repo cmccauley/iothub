@@ -7,13 +7,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/mqtt")
+@RequestMapping("/")
 public class HubController {
 
     @Autowired
     private MqttService mqttService;
 
-    @RequestMapping("/start")
+    @RequestMapping()
+    public String home()
+    {
+        return "home";
+    }
+
+    @RequestMapping("/connect")
     public String start() {
         try {
             mqttService.start();

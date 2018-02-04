@@ -30,7 +30,7 @@ public class SubscriptionService {
     public void addSubscription(String topic) {
         getSubscriptionRepository().save(new Subscription(topic, true));
         try {
-            mqttClient.subscribe(topic); // Todo: Handle Active/Inactive boolean
+            mqttClient.subscribe(topic); // Todo: Handle Active/Inactive boolean7
             subscriptions.add(topic);
         } catch (MqttException e) {
             e.printStackTrace();

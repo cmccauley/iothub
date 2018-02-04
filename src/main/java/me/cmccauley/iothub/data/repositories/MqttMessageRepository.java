@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MqttLogRepository extends JpaRepository<MqttMessage, Long> {
+public interface MqttMessageRepository extends JpaRepository<MqttMessage, Long> {
 }

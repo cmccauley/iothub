@@ -1,5 +1,7 @@
 package me.cmccauley.iothub.devices.led;
 
+import java.awt.*;
+
 public class Led {
     private int id;
     private int hue;

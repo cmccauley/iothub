@@ -1,21 +1,21 @@
 package me.cmccauley.iothub.services;
 
-import me.cmccauley.iothub.data.models.MqttLog;
-import me.cmccauley.iothub.data.repositories.MqttLogRepository;
+import me.cmccauley.iothub.data.models.MqttMessage;
+import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MqttLogService {
 
-    private final MqttLogRepository mqttLogRepository;
+    private final MqttMessageRepository mqttMessageRepository;
 
     @Autowired
-    public MqttLogService(MqttLogRepository mqttLogRepository) {
-        this.mqttLogRepository = mqttLogRepository;
+    public MqttLogService(MqttMessageRepository mqttMessageRepository) {
+        this.mqttMessageRepository = mqttMessageRepository;
     }
 
-    public void addLog(MqttLog mqttLog){
-        mqttLogRepository.save(mqttLog);
+    public void addLog(MqttMessage mqttMessage){
+        mqttMessageRepository.save(mqttMessage);
     }
 }
