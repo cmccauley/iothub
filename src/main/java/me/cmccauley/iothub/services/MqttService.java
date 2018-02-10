@@ -7,6 +7,8 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class MqttService {
 
@@ -38,6 +40,23 @@ public class MqttService {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void publish(String topic, Map<String, String> message) {
+
+        StringBuilder builder = new StringBuilder();
+        message.forEach((key, value) -> {
+            builder.append(key);
+            builder.append("=");
+            builder.append(value);
+            builder.append(";");
+        });
+
+        try {
+            mqttClient.publish(topic, new MqttMessage(builder.toString().getBytes()));
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     public MqttClient getMqttClient() {
