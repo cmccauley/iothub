@@ -11,14 +11,14 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "topic")
-    private String topic;
+    @Column(name = "topicName")
+    private String topicName;
 
     @Column(name = "active")
     private boolean active;
 
-    public Subscription(String topic, boolean active) {
-        this.topic = topic;
+    public Subscription(String topicName, boolean active) {
+        this.topicName = topicName;
         this.active = active;
     }
 
@@ -30,12 +30,12 @@ public class Subscription {
         this.id = id;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getTopicName() {
+        return topicName;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 
     public boolean isActive() {

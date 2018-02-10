@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +19,8 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final MqttClient mqttClient;
 
-    // Keep track of subscriptions as the MqttClient doesn't have functionality to get current subscriptions.
-    private final Set<String> subscriptions = new HashSet<>();
+    // Keep track of loadedSubscriptions as the MqttClient doesn't have functionality to get current loadedSubscriptions.
+    private final Set<String> loadedSubscriptions = new HashSet<>();
 
     @Autowired
     public SubscriptionService(SubscriptionRepository subscriptionRepository, MqttClient mqttClient) {
@@ -27,36 +28,35 @@ public class SubscriptionService {
         this.mqttClient = mqttClient;
     }
 
-    public void addSubscription(String topic) {
-        getSubscriptionRepository().save(new Subscription(topic, true));
-        try {
-            mqttClient.subscribe(topic); // Todo: Handle Active/Inactive boolean7
-            subscriptions.add(topic);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+    public Subscription createSubscription(Subscription subscription) {
+        return getSubscriptionRepository().save(subscription);
     }
 
-    public void updateSubscription(Subscription subscription){
-        // Todo: if-exist check somewhere
+    public Subscription getSubscriptionById(Long id)
+    {
+        return subscriptionRepository.findOne(id);
+    }
+
+    public void updateSubscription(Subscription subscription) {
         getSubscriptionRepository().save(subscription);
     }
 
-    public void deleteSubscription(String topic) {
-        getSubscriptionRepository().deleteByTopic(topic);
+    public void deleteSubscription(Long id) {
+        Subscription subscription = subscriptionRepository.findOne(id);
+        getSubscriptionRepository().delete(id);
         try {
-            mqttClient.unsubscribe(topic);
-            subscriptions.remove(topic);
+            mqttClient.unsubscribe(subscription.getTopicName());
+            loadedSubscriptions.remove(subscription.getTopicName());
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Subscription> getSubcriptions(){
+    public Collection<Subscription> getAllSubscriptions() {
         return subscriptionRepository.findAll();
     }
 
-    public Subscription getSubscription(Long id){
+    public Subscription getSubscription(Long id) {
         return getSubscriptionRepository().findOne(id);
     }
 
@@ -64,11 +64,11 @@ public class SubscriptionService {
         final List<Subscription> databaseSubscriptions = subscriptionRepository.findAll();
         final List<Subscription> filteredSubs = databaseSubscriptions.stream()
                 .filter(dbSub ->
-                        subscriptions.contains(dbSub.getTopic())).collect(Collectors.toList());
+                        loadedSubscriptions.contains(dbSub.getTopicName())).collect(Collectors.toList());
         filteredSubs.forEach(filteredSub -> {
             try {
-                mqttClient.subscribe(filteredSub.getTopic());
-                subscriptions.add(filteredSub.getTopic());
+                mqttClient.subscribe(filteredSub.getTopicName());
+                loadedSubscriptions.add(filteredSub.getTopicName());
             } catch (MqttException e) {
                 e.printStackTrace();
             }
@@ -83,7 +83,7 @@ public class SubscriptionService {
         return mqttClient;
     }
 
-    public Set<String> getSubscriptions() {
-        return subscriptions;
+    public Set<String> getLoadedSubscriptions() {
+        return loadedSubscriptions;
     }
 }

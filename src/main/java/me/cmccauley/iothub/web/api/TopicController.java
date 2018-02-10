@@ -1,18 +1,18 @@
 package me.cmccauley.iothub.web.api;
 
-import me.cmccauley.iothub.data.models.MqttMessage;
 import me.cmccauley.iothub.data.models.Topic;
-import me.cmccauley.iothub.data.repositories.TopicRepository;
-import me.cmccauley.iothub.services.MqttService;
 import me.cmccauley.iothub.services.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.net.URI;
+import java.util.Collection;
 
 @RestController
+@RequestMapping("/topics")
 public class TopicController {
 
     private final TopicService topicService;
@@ -22,22 +22,28 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @GetMapping("/topics")
-    public List<Topic> getAllTopics() {
+    @PostMapping
+    public ResponseEntity<?> createTopic(@Valid @RequestBody Topic topic) {
+        final Topic createdTopic = topicService.createTopic(topic);
+        final URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(createdTopic.getId()).toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("{topicId}")
+    public Topic getTopicById(@PathVariable(value = "topicId") Long topicId) {
+        return topicService.getTopicById(topicId);
+    }
+
+    @GetMapping
+    public Collection<Topic> getAllTopics() {
         return topicService.getAllTopics();
     }
 
-    @PostMapping("/topics")
-    public Topic createTopic(@Valid @RequestBody Topic topic) {
-        return topicService.createTopic(topic);
-    }
-
-    @GetMapping("/topics/{id}")
-    public ResponseEntity<Topic> getTopicById(@PathVariable(value = "id") Long topicId) {
-        Topic topic = topicService.getTopicById(topicId);
-        if(topic == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(topic);
+    @DeleteMapping
+    public void deleteTopic(Long topicId) {
+        topicService.deleteTopic(topicId);
     }
 }

@@ -1,4 +1,4 @@
-package me.cmccauley.iothub.data.models;
+package me.cmccauley.iothub.enums;
 
 public enum MessageType {
     JSON,

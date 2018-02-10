@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    void deleteByTopic(String topic);
+    void deleteByTopicName(String topicName);
 }

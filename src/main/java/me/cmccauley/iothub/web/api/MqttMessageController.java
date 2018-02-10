@@ -2,42 +2,33 @@ package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.data.models.MqttMessage;
 import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
+import me.cmccauley.iothub.services.MqttMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
-@RequestMapping("/mqtt")
+@RequestMapping("/mqttmessages")
 public class MqttMessageController {
 
-    private final MqttMessageRepository mqttMessageRepository;
+    private final MqttMessageService mqttMessageService;
 
     @Autowired
-    public MqttMessageController(MqttMessageRepository mqttMessageRepository)
-    {
-        this.mqttMessageRepository = mqttMessageRepository;
+    public MqttMessageController(MqttMessageService mqttMessageService) {
+        this.mqttMessageService = mqttMessageService;
     }
 
-    @GetMapping("/messages")
-    public List<MqttMessage> getAllmessages() {
-        return mqttMessageRepository.findAll();
+    @GetMapping
+    public Collection<MqttMessage> getAllMqttMessages() {
+        return mqttMessageService.getAllMqttMessages();
     }
 
-    @PostMapping("/messages")
-    public MqttMessage createLog(@Valid @RequestBody MqttMessage mqttMessage) {
-        return mqttMessageRepository.save(mqttMessage);
-    }
-
-    @GetMapping("/messages/{id}")
-    public ResponseEntity<MqttMessage> getMessageById(@PathVariable(value = "id") Long mqttLogId) {
-        MqttMessage mqttMessage = mqttMessageRepository.findOne(mqttLogId);
-        if(mqttMessage == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(mqttMessage);
+    @GetMapping("mqttMessageId")
+    public MqttMessage getMqttMessageById(@PathVariable(value = "mqttMessageId") Long mqttMessageId) {
+        return mqttMessageService.getMqttMessageById(mqttMessageId);
     }
 
 }

@@ -23,7 +23,15 @@ public class PublishService {
     public void publish(Long topicId, Map<String, String> message)
     {
         final Topic topic = topicRepository.getOne(topicId);
-        mqttService.publish(topic.getName(), message);
+        if(isValid(topic, message))
+        {
+            mqttService.publish(topic.getName(), message);
+        }
+    }
+
+    private boolean isValid(Topic topic, Map<String, String> message)
+    {
+        return message.keySet().containsAll(topic.getParameterList());
     }
 
 }

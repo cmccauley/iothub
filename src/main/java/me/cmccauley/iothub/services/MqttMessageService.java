@@ -5,6 +5,8 @@ import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 public class MqttMessageService {
 
@@ -17,5 +19,15 @@ public class MqttMessageService {
 
     public void addMessage(MqttMessage mqttMessage){
         mqttMessageRepository.save(mqttMessage);
+    }
+
+    public MqttMessage getMqttMessageById(Long id)
+    {
+        return mqttMessageRepository.findOne(id);
+    }
+
+    public Collection<MqttMessage> getAllMqttMessages()
+    {
+        return mqttMessageRepository.findAll();
     }
 }

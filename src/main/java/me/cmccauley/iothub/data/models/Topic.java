@@ -1,8 +1,10 @@
 package me.cmccauley.iothub.data.models;
 
+import me.cmccauley.iothub.enums.MessageType;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "topic", schema = "iothub")
@@ -13,16 +15,16 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Enumerated
     private MessageType messageType;
 
     @ElementCollection
-    private List<String> parameterList;
+    private Set<String> parameterList;
 
-    public Topic(String name, MessageType messageType, List<String> parameterList) {
+    public Topic(String name, MessageType messageType, Set<String> parameterList) {
         this.name = name;
         this.messageType = messageType;
         this.parameterList = parameterList;
@@ -36,7 +38,7 @@ public class Topic {
     }
 
     public static Topic led_builder_example() {
-        List<String> parameters = new ArrayList<>();
+        Set<String> parameters = new HashSet<>();
         parameters.add("H");
         parameters.add("S");
         parameters.add("V");
@@ -60,11 +62,11 @@ public class Topic {
         this.messageType = messageType;
     }
 
-    public List<String> getParameterList() {
+    public Set<String> getParameterList() {
         return parameterList;
     }
 
-    public void setParameterList(List<String> parameterList) {
+    public void setParameterList(Set<String> parameterList) {
         this.parameterList = parameterList;
     }
 }

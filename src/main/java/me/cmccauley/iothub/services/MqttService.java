@@ -67,7 +67,6 @@ public class MqttService {
         return defaultCallback;
     }
 
-
     public SubscriptionRepository getSubscriptionRepository() {
         return subscriptionRepository;
     }
