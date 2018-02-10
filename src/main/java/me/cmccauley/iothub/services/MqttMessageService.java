@@ -6,16 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MqttLogService {
+public class MqttMessageService {
 
     private final MqttMessageRepository mqttMessageRepository;
 
     @Autowired
-    public MqttLogService(MqttMessageRepository mqttMessageRepository) {
+    public MqttMessageService(MqttMessageRepository mqttMessageRepository) {
         this.mqttMessageRepository = mqttMessageRepository;
     }
 
-    public void addLog(MqttMessage mqttMessage){
+    public void addMessage(MqttMessage mqttMessage){
         mqttMessageRepository.save(mqttMessage);
     }
 }

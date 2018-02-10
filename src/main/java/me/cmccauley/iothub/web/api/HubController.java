@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HubController {
 
+    private final MqttService mqttService;
+
     @Autowired
-    private MqttService mqttService;
+    public HubController(MqttService mqttService) {
+        this.mqttService = mqttService;
+    }
 
     @RequestMapping()
     public String home()
@@ -29,10 +33,4 @@ public class HubController {
             return "failed";
         }
     }
-
-    @RequestMapping("/publish")
-    public String publish() throws MqttException {
-        return "";
-    }
-
 }

@@ -21,18 +21,18 @@ public class MqttMessageController {
         this.mqttMessageRepository = mqttMessageRepository;
     }
 
-    @GetMapping("/logs")
-    public List<MqttMessage> getAllLogs() {
+    @GetMapping("/messages")
+    public List<MqttMessage> getAllmessages() {
         return mqttMessageRepository.findAll();
     }
 
-    @PostMapping("/logs")
+    @PostMapping("/messages")
     public MqttMessage createLog(@Valid @RequestBody MqttMessage mqttMessage) {
         return mqttMessageRepository.save(mqttMessage);
     }
 
-    @GetMapping("/logs/{id}")
-    public ResponseEntity<MqttMessage> getNoteById(@PathVariable(value = "id") Long mqttLogId) {
+    @GetMapping("/messages/{id}")
+    public ResponseEntity<MqttMessage> getMessageById(@PathVariable(value = "id") Long mqttLogId) {
         MqttMessage mqttMessage = mqttMessageRepository.findOne(mqttLogId);
         if(mqttMessage == null) {
             return ResponseEntity.notFound().build();

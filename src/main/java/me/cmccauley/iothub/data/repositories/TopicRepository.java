@@ -1,10 +1,9 @@
 package me.cmccauley.iothub.data.repositories;
 
-import me.cmccauley.iothub.data.models.Subscription;
+import me.cmccauley.iothub.data.models.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    void deleteByTopic(String topic);
+public interface TopicRepository extends JpaRepository<Topic, Long> {
 }
