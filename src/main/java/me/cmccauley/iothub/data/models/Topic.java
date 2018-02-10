@@ -28,6 +28,13 @@ public class Topic {
         this.parameterList = parameterList;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Topic() {
+    }
+
     public static Topic led_builder_example() {
         List<String> parameters = new ArrayList<>();
         parameters.add("H");
