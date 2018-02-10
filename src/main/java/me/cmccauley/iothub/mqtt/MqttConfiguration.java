@@ -18,7 +18,7 @@ public class MqttConfiguration {
 
     @Bean
     public MqttClient mqttClient() throws MqttException {
-        return new MqttClient("tcp://mqtt:1883", "iothub");
+        return new MqttClient("tcp://localhost:1884", "iothub");
     }
 
 }

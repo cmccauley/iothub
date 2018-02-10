@@ -21,4 +21,5 @@ public class SimpleMessage implements HubMqttMessage{
     public List<String> getMessages() {
         return Collections.singletonList(message);
     }
+
 }
