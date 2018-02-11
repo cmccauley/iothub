@@ -1,6 +1,5 @@
-package me.cmccauley.iothub.mqtt.messages.impl;
+/*package me.cmccauley.iothub.mqtt.messages.impl;
 
-import me.cmccauley.iothub.devices.led.Led;
 import me.cmccauley.iothub.mqtt.messages.HubMqttMessage;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -58,3 +57,4 @@ public class LedMessage implements HubMqttMessage {
         return ledMessages;
     }
 }
+*/

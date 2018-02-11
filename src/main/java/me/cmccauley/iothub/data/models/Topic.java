@@ -30,10 +30,6 @@ public class Topic {
         this.parameterList = parameterList;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Topic() {
     }
 
@@ -44,6 +40,10 @@ public class Topic {
         parameters.add("V");
 
         return new Topic("/bedroom/led", MessageType.JSON, parameters);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

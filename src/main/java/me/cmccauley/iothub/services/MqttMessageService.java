@@ -17,17 +17,15 @@ public class MqttMessageService {
         this.mqttMessageRepository = mqttMessageRepository;
     }
 
-    public void addMessage(MqttMessage mqttMessage){
+    public void addMessage(MqttMessage mqttMessage) {
         mqttMessageRepository.save(mqttMessage);
     }
 
-    public MqttMessage getMqttMessageById(Long id)
-    {
+    public MqttMessage getMqttMessageById(Long id) {
         return mqttMessageRepository.findOne(id);
     }
 
-    public Collection<MqttMessage> getAllMqttMessages()
-    {
+    public Collection<MqttMessage> getAllMqttMessages() {
         return mqttMessageRepository.findAll();
     }
 }

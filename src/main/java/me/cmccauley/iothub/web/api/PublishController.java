@@ -19,8 +19,8 @@ public class PublishController {
         this.publishService = publishService;
     }
 
-    @PostMapping("/publish/topic/{id}")
-    public ResponseEntity<?> publishMessage(@PathVariable(value = "id") Long topicId, @RequestBody Map<String, String> message) {
+    @PostMapping("/publish/topic/{topicId}")
+    public ResponseEntity<?> publishMessage(@PathVariable(value = "topicId") Long topicId, @RequestBody Map<String, String> message) {
         publishService.publish(topicId, message);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }

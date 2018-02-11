@@ -25,7 +25,7 @@ public class DefaultCallback implements MqttCallback {
     @Override
     public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage mqttMessage) throws Exception {
         System.out.println("Message received:\n\t" + new String(mqttMessage.getPayload()));
-        mqttMessageService.addMessage(new MqttMessage(topic,new String(mqttMessage.getPayload())));
+        mqttMessageService.addMessage(new MqttMessage(topic, new String(mqttMessage.getPayload())));
     }
 
     @Override

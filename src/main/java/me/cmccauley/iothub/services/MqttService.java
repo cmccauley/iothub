@@ -1,9 +1,11 @@
 package me.cmccauley.iothub.services;
 
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
-import me.cmccauley.iothub.mqtt.DefaultCallback;
 import me.cmccauley.iothub.mqtt.messages.HubMqttMessage;
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -5,7 +5,7 @@ import me.cmccauley.iothub.mqtt.messages.HubMqttMessage;
 import java.util.Collections;
 import java.util.List;
 
-public class SimpleMessage implements HubMqttMessage{
+public class SimpleMessage implements HubMqttMessage {
 
     private String message;
 

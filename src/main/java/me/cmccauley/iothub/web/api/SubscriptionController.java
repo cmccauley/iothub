@@ -1,7 +1,6 @@
 package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.data.models.Subscription;
-import me.cmccauley.iothub.data.models.Topic;
 import me.cmccauley.iothub.services.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.xml.ws.Response;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -26,8 +23,7 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSubscription(@Valid @RequestBody Subscription subscription)
-    {
+    public ResponseEntity<?> createSubscription(@Valid @RequestBody Subscription subscription) {
         final Subscription createdSubscription = subscriptionService.createSubscription(subscription);
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -42,16 +38,14 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public Collection<Subscription> getAllSubscriptions()
-    {
+    public Collection<Subscription> getAllSubscriptions() {
         return subscriptionService.getAllSubscriptions();
     }
 
     @DeleteMapping
-    public void deleteSubscription(Long id){
+    public void deleteSubscription(Long id) {
         subscriptionService.deleteSubscription(id);
     }
-
 
 
     public SubscriptionService getSubscriptionService() {

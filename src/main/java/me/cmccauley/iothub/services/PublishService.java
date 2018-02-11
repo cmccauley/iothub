@@ -14,23 +14,19 @@ public class PublishService {
     private final TopicRepository topicRepository;
 
     @Autowired
-    public PublishService(MqttService mqttService, TopicRepository topicRepository)
-    {
+    public PublishService(MqttService mqttService, TopicRepository topicRepository) {
         this.mqttService = mqttService;
         this.topicRepository = topicRepository;
     }
 
-    public void publish(Long topicId, Map<String, String> message)
-    {
+    public void publish(Long topicId, Map<String, String> message) {
         final Topic topic = topicRepository.getOne(topicId);
-        if(isValid(topic, message))
-        {
+        if (isValid(topic, message)) {
             mqttService.publish(topic.getName(), message);
         }
     }
 
-    private boolean isValid(Topic topic, Map<String, String> message)
-    {
+    private boolean isValid(Topic topic, Map<String, String> message) {
         return message.keySet().containsAll(topic.getParameterList());
     }
 

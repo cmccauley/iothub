@@ -32,8 +32,7 @@ public class SubscriptionService {
         return getSubscriptionRepository().save(subscription);
     }
 
-    public Subscription getSubscriptionById(Long id)
-    {
+    public Subscription getSubscriptionById(Long id) {
         return subscriptionRepository.findOne(id);
     }
 
