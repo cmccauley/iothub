@@ -23,6 +23,8 @@ public class PublishService {
         final Topic topic = topicRepository.getOne(topicId);
         if (isValid(topic, message)) {
             mqttService.publish(topic.getName(), message);
+        } else {
+            throw new RuntimeException("Dat Validation... it works. You Haxxor. Valid params:" + topic.getParameterList());
         }
     }
 
