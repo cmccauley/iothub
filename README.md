@@ -2,3 +2,11 @@
 
 # iothub
 Rest-MQTT API Gateway for Internet of Things
+
+# Getting started
+
+```sh
+mvn package
+docker-compose up
+```
+
