@@ -1,6 +1,5 @@
 # Other packages that you might need:
 # docker
-# docker-compose
 # idea
 # vscode-with-extensions 
 
@@ -11,5 +10,6 @@ stdenv.mkDerivation rec {
   buildInputs = [
     maven
     platformio
+    docker_compose
   ];
 }
