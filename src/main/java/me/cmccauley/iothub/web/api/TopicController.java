@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/topics")
@@ -33,8 +34,11 @@ public class TopicController {
     }
 
     @GetMapping("{topicId}")
-    public Topic getTopicById(@PathVariable(value = "topicId") Long topicId) {
-        return topicService.getTopicById(topicId);
+    public ResponseEntity<Topic> getTopicById(@PathVariable(value = "topicId") Long topicId) {
+        return Optional
+                .ofNullable(topicService.getTopicById(topicId))
+                .map(topic -> ResponseEntity.ok().body(topic))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping

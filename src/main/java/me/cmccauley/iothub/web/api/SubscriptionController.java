@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -33,8 +34,11 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{subscriptionId}")
-    public Subscription getSubscriptionById(@PathVariable(value = "subscriptionId") Long subscriptionId) {
-        return subscriptionService.getSubscriptionById(subscriptionId);
+    public ResponseEntity<Subscription> getSubscriptionById(@PathVariable(value = "subscriptionId") Long subscriptionId) {
+        return Optional
+                .ofNullable(subscriptionService.getSubscriptionById(subscriptionId))
+                .map(topic -> ResponseEntity.ok().body(topic))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
