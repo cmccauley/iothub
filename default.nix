@@ -1,4 +1,4 @@
-# other pacakges that you might need:
+# Other packages that you might need:
 # docker
 # docker-compose
 # idea
