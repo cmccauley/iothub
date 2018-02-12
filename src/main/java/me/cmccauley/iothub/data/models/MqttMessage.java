@@ -1,31 +1,33 @@
 package me.cmccauley.iothub.data.models;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
-@Table(name = "subscription", schema = "iothub")
+@Table(name = "mqtt_message", schema = "iothub")
 public class MqttMessage {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "topic")
-    private String topic;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id", nullable = false)
+    private Subscription subscription;
 
-    @Column(name = "message")
+    @Column(name = "message", nullable = false)
     private String message;
 
-    @Column(nullable = false, updatable = false)
-    private Timestamp arrived_at;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "arrived_at", nullable = false)
+    private Date arrivedAt = new Date();
 
-    public MqttMessage(String topic, String message) {
-        this.topic = topic;
+    public MqttMessage() {
+    }
+
+    public MqttMessage(Subscription subscription, String message) {
+        this.subscription = subscription;
         this.message = message;
-        this.arrived_at = new Timestamp(System.currentTimeMillis());
     }
 
     public Long getId() {
@@ -36,12 +38,12 @@ public class MqttMessage {
         this.id = id;
     }
 
-    public String getTopic() {
-        return topic;
+    public Subscription getSubscription() {
+        return subscription;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
     public String getMessage() {
@@ -52,7 +54,8 @@ public class MqttMessage {
         this.message = message;
     }
 
-    public Date getArrived_at() {
-        return arrived_at;
+    public Date getArrivedAt() {
+        return arrivedAt;
     }
+
 }

@@ -36,6 +36,10 @@ public class SubscriptionService {
         return subscriptionRepository.findOne(id);
     }
 
+    public Subscription getSubscriptionByName(String subscriptionName) {
+        return subscriptionRepository.findByTopicName(subscriptionName);
+    }
+
     public void updateSubscription(Subscription subscription) {
         getSubscriptionRepository().save(subscription);
     }

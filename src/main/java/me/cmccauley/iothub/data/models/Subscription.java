@@ -1,21 +1,27 @@
 package me.cmccauley.iothub.data.models;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "subscription", schema = "iothub")
 public class Subscription {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "topicName")
+    @Column(name = "topic_name", nullable = false)
     private String topicName;
 
-    @Column(name = "active")
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private Set<MqttMessage> mqttMessages;
+
+    @Column(name = "active", nullable = false)
     private boolean active;
+
+    public Subscription() {
+    }
 
     public Subscription(String topicName, boolean active) {
         this.topicName = topicName;
@@ -36,6 +42,14 @@ public class Subscription {
 
     public void setTopicName(String topicName) {
         this.topicName = topicName;
+    }
+
+    public Set<MqttMessage> getMqttMessages() {
+        return mqttMessages;
+    }
+
+    public void setMqttMessages(Set<MqttMessage> mqttMessages) {
+        this.mqttMessages = mqttMessages;
     }
 
     public boolean isActive() {

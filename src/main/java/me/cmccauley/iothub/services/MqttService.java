@@ -30,7 +30,6 @@ public class MqttService {
     public void start() throws MqttException {
         mqttClient.setCallback(defaultCallback);
         mqttClient.connect();
-        mqttClient.subscribe("#");
     }
 
     public void publish(String topic, HubMqttMessage message) {

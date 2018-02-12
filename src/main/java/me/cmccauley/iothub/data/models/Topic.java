@@ -11,7 +11,6 @@ import java.util.Set;
 public class Topic {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
