@@ -42,7 +42,6 @@ public class MqttMessageServiceTest {
 
     @Before
     public void setup() {
-        mqttMessageService.setSubscriptionRepository(subscriptionRepository);
         mqttMessageService.setMqttMessageRepository(mqttMessageRepository);
         activeSubscription = new Subscription();
         activeSubscription.setTopicName("topic1");
@@ -51,21 +50,6 @@ public class MqttMessageServiceTest {
         inactiveSubscription = new Subscription();
         inactiveSubscription.setTopicName("topic2");
         inactiveSubscription.setActive(false);
-    }
-
-
-    @Test
-    public void handleCallbackMessage() {
-        MqttMessage mqttMessage = new MqttMessage();
-        mqttMessage.setMessage("message1");
-        mqttMessage.setSubscription(activeSubscription);
-
-        when(subscriptionRepository.findByTopicNameAndActiveTrue("topic1")).thenReturn(activeSubscription);
-
-        //When
-        mqttMessageService.handleCallbackMessage("topic1", mqttMessage.getMessage());
-        //Then
-        verify(mqttMessageRepository, atLeastOnce()).save(isA(MqttMessage.class));
     }
 
     @Test

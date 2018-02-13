@@ -1,9 +1,7 @@
 package me.cmccauley.iothub.services;
 
 import me.cmccauley.iothub.data.models.MqttMessage;
-import me.cmccauley.iothub.data.models.Subscription;
 import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
-import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +14,10 @@ public class MqttMessageService {
     private final static Logger LOG = LoggerFactory.getLogger(MqttMessageService.class);
 
     private MqttMessageRepository mqttMessageRepository;
-    private SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    public MqttMessageService(MqttMessageRepository mqttMessageRepository, SubscriptionRepository subscriptionRepository) {
+    public MqttMessageService(MqttMessageRepository mqttMessageRepository) {
         this.mqttMessageRepository = mqttMessageRepository;
-        this.subscriptionRepository = subscriptionRepository;
-    }
-
-    public void handleCallbackMessage(String topic, String receivedMessage) {
-        final Subscription subscription = subscriptionRepository.findByTopicNameAndActiveTrue(topic);
-        if (subscription != null) {
-            final MqttMessage mqttMessage = new MqttMessage();
-            mqttMessage.setSubscription(subscription);
-            mqttMessage.setMessage(receivedMessage);
-
-            mqttMessageRepository.save(mqttMessage);
-        } else {
-            LOG.error("Message received for a topic that was not found in the system. Topic:{}, Message:{}", topic, receivedMessage);
-        }
     }
 
     public MqttMessage getMqttMessageById(Long subscriptionId) {
@@ -55,13 +38,5 @@ public class MqttMessageService {
 
     public void setMqttMessageRepository(MqttMessageRepository mqttMessageRepository) {
         this.mqttMessageRepository = mqttMessageRepository;
-    }
-
-    public SubscriptionRepository getSubscriptionRepository() {
-        return subscriptionRepository;
-    }
-
-    public void setSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
-        this.subscriptionRepository = subscriptionRepository;
     }
 }

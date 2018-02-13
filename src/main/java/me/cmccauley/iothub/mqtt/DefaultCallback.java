@@ -9,16 +9,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class DefaultCallback implements MqttCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCallback.class);
 
-    private MqttMessageService mqttMessageService;
+    private Map<String, CallbackMessageHandler> callbackStrategies;
 
     @Autowired
-    public DefaultCallback(MqttMessageService mqttMessageService) {
-        this.mqttMessageService = mqttMessageService;
+    public DefaultCallback(Map<String, CallbackMessageHandler> callbackStrategies) {
+        this.callbackStrategies = callbackStrategies;
     }
 
     @Override
@@ -28,8 +31,16 @@ public class DefaultCallback implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-        LOG.info("Message received:\n\t" + new String(mqttMessage.getPayload()));
-        mqttMessageService.handleCallbackMessage(topic, new String(mqttMessage.getPayload()));
+        LOG.info("Message received:" + new String(mqttMessage.getPayload()));
+
+        CallbackMessageHandler message;
+        if (topic.startsWith("/announce")) {
+            message = callbackStrategies.get("announceMessageHandler");
+        } else {
+            message = callbackStrategies.get("dataMessageHandler");
+        }
+
+        message.handleCallbackMessage(topic, mqttMessage);
     }
 
     @Override
@@ -37,11 +48,11 @@ public class DefaultCallback implements MqttCallback {
 
     }
 
-    public MqttMessageService getMqttMessageService() {
-        return mqttMessageService;
+    public Map<String, CallbackMessageHandler> getCallbackStrategies() {
+        return callbackStrategies;
     }
 
-    public void setMqttMessageService(MqttMessageService mqttMessageService) {
-        this.mqttMessageService = mqttMessageService;
+    public void setCallbackStrategies(Map<String, CallbackMessageHandler> callbackStrategies) {
+        this.callbackStrategies = callbackStrategies;
     }
 }
