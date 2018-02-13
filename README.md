@@ -1,4 +1,4 @@
-![alt text](https://travis-ci.org/cmccauley/iothub.svg?branch=master "Travis-CI")
+[![Build Status](https://travis-ci.org/cmccauley/iothub.svg?branch=master)](https://travis-ci.org/cmccauley/iothub)
 
 # iothub
 Rest-MQTT API Gateway for Internet of Things
