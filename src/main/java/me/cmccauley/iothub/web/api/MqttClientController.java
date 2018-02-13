@@ -24,7 +24,7 @@ public class MqttClientController {
     }
 
     @GetMapping("/status")
-    public StatusResponse status() {
+    public StatusResponse getStatus() {
         return new StatusResponse(mqttService.getMqttClient().isConnected());
     }
 
@@ -37,6 +37,12 @@ public class MqttClientController {
     @PostMapping("/disconnect")
     public ResponseEntity disconnect() throws MqttException {
         mqttService.getMqttClient().disconnect();
+        return ok().build();
+    }
+
+    @PostMapping("/reloadactivesubscriptions")
+    public ResponseEntity reloadActiveSubscriptions() {
+        mqttService.loadActiveSubscriptions();
         return ok().build();
     }
 }
