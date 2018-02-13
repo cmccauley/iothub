@@ -26,9 +26,14 @@ public class MqttMessageController {
         return mqttMessageService.getAllMqttMessages();
     }
 
-    @GetMapping("mqttMessageId")
+    @GetMapping("{mqttMessageId}")
     public MqttMessage getMqttMessageById(@PathVariable(value = "mqttMessageId") Long mqttMessageId) {
         return mqttMessageService.getMqttMessageById(mqttMessageId);
+    }
+
+    @GetMapping("/subscription/{subscriptionId}")
+    public MqttMessage getMqttMessagesBySubscriptionId(@PathVariable(value = "subscriptionId") Long subscriptionId) {
+        return mqttMessageService.getMqttMessageBySubscriptionId(subscriptionId);
     }
 
 }

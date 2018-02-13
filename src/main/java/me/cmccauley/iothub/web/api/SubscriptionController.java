@@ -33,7 +33,7 @@ public class SubscriptionController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/{subscriptionId}")
+    @GetMapping("{subscriptionId}")
     public ResponseEntity<Subscription> getSubscriptionById(@PathVariable(value = "subscriptionId") Long subscriptionId) {
         return Optional
                 .ofNullable(subscriptionService.getSubscriptionById(subscriptionId))
@@ -46,11 +46,10 @@ public class SubscriptionController {
         return subscriptionService.getAllSubscriptions();
     }
 
-    @DeleteMapping
-    public void deleteSubscription(Long id) {
-        subscriptionService.deleteSubscription(id);
+    @DeleteMapping("{subscriptionId}")
+    public void deleteSubscription(@PathVariable(value = "subscriptionId") Long subscriptionId) {
+        subscriptionService.deleteSubscription(subscriptionId);
     }
-
 
     public SubscriptionService getSubscriptionService() {
         return subscriptionService;

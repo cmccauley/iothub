@@ -1,5 +1,11 @@
 package me.cmccauley.iothub.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -14,7 +20,9 @@ public class Subscription {
     @Column(name = "topic_name", nullable = false)
     private String topicName;
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<MqttMessage> mqttMessages;
 
     @Column(name = "active", nullable = false)

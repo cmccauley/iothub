@@ -1,9 +1,10 @@
 package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.IothubApplication;
-import me.cmccauley.iothub.data.models.Topic;
-import me.cmccauley.iothub.data.repositories.TopicRepository;
-import me.cmccauley.iothub.services.TopicService;
+import me.cmccauley.iothub.data.models.MqttMessage;
+import me.cmccauley.iothub.data.models.Subscription;
+import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
+import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,20 +24,15 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collections;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IothubApplication.class)
 @WebAppConfiguration
-public class TopicControllerTest {
+public class MqttMessageControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -44,19 +40,18 @@ public class TopicControllerTest {
 
     private MockMvc mockMvc;
 
-    private String topicName1 = "channel/savedTopic1";
-    private String topicName2 = "channel/savedTopic2";
+    private Subscription savedSubscription1;
 
-    private Topic savedTopic1;
-    private Topic savedTopic2;
+    private MqttMessage savedMqttMessage1;
+    private MqttMessage savedMqttMessage2;
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
     @Autowired
-    private TopicRepository topicRepository;
+    private SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    private TopicService topicService;
+    private MqttMessageRepository mqttMessageRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -65,46 +60,34 @@ public class TopicControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        this.topicRepository.deleteAllInBatch();
-        this.savedTopic1 = topicRepository.save(new Topic(topicName1, Collections.EMPTY_SET));
-        this.savedTopic2 = topicRepository.save(new Topic(topicName2, Collections.EMPTY_SET));
+        this.mqttMessageRepository.deleteAllInBatch();
+        this.subscriptionRepository.deleteAllInBatch();
+
+        this.savedSubscription1 = subscriptionRepository.save(new Subscription("channel/savedSubscription1", true));
+
+        this.savedMqttMessage1 = mqttMessageRepository.save(new MqttMessage(this.savedSubscription1, "message1"));
+        this.savedMqttMessage2 = mqttMessageRepository.save(new MqttMessage(this.savedSubscription1, "message2"));
     }
 
     @Test
-    public void topicNotFound() throws Exception {
-        mockMvc.perform(get("/topics/123")).andDo(print()).andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void createTopic() throws Exception {
-        Topic createdTopic = new Topic("createdTopic", Collections.EMPTY_SET);
-        String topicJson = json(createdTopic);
-
-        MvcResult mvcResult = mockMvc.perform(post("/topics")
-                .contentType(contentType)
-                .content(topicJson))
-                .andExpect(status().isCreated()).andReturn();
-        String location = mvcResult.getResponse().getHeader("location");
-        assertTrue(location.contains("/topics"));
-    }
-
-    @Test
-    public void getTopicById() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/topics/" + savedTopic1.getId())).andExpect(status().isOk()).andReturn();
+    public void getMqttMessageById() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/" + savedMqttMessage1.getId())).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(topicName1));
+        assertTrue(response.contains(savedMqttMessage1.getMessage()));
     }
 
     @Test
-    public void getAllTopics() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/topics")).andExpect(status().isOk()).andReturn();
+    public void getAllMqttMessages() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/")).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(topicName1) && response.contains(topicName2));
+        assertTrue(response.contains(savedMqttMessage1.getMessage()) && response.contains(savedMqttMessage2.getMessage()));
     }
 
     @Test
-    public void deleteTopic() throws Exception {
-        mockMvc.perform(delete("/topics/" + savedTopic1.getId())).andExpect(status().isOk());
+    public void getMqttMessageBySubscriptionId() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/subscription/" + savedSubscription1.getId())).andExpect(status().isOk()).andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        assertTrue(response.contains(savedMqttMessage1.getMessage()));
     }
 
     @Autowired

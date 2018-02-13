@@ -46,8 +46,8 @@ public class TopicController {
         return topicService.getAllTopics();
     }
 
-    @DeleteMapping
-    public void deleteTopic(Long topicId) {
+    @DeleteMapping("{topicId}")
+    public void deleteTopic(@PathVariable(value = "topicId") Long topicId) {
         topicService.deleteTopic(topicId);
     }
 }

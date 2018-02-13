@@ -13,7 +13,7 @@ import java.util.Collection;
 
 @Service
 public class MqttMessageService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final static Logger LOG = LoggerFactory.getLogger(MqttMessageService.class);
 
     private final MqttMessageRepository mqttMessageRepository;
     private final SubscriptionService subscriptionService;
@@ -36,12 +36,16 @@ public class MqttMessageService {
         }
         else
         {
-            log.error("Message received for a topic that was not found in the system. Topic:{}, Message:{}", topic, receivedMessage);
+            LOG.error("Message received for a topic that was not found in the system. Topic:{}, Message:{}", topic, receivedMessage);
         }
     }
 
-    public MqttMessage getMqttMessageById(Long id) {
-        return mqttMessageRepository.findOne(id);
+    public MqttMessage getMqttMessageById(Long subscriptionId) {
+        return mqttMessageRepository.findOne(subscriptionId);
+    }
+
+    public MqttMessage getMqttMessageBySubscriptionId(Long subscriptionId) {
+        return mqttMessageRepository.findOne(subscriptionId);
     }
 
     public Collection<MqttMessage> getAllMqttMessages() {
