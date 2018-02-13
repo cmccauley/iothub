@@ -2,33 +2,26 @@ package me.cmccauley.iothub.services;
 
 import me.cmccauley.iothub.data.models.Subscription;
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionService {
     private final static Logger LOG = LoggerFactory.getLogger(SubscriptionService.class);
 
     private final SubscriptionRepository subscriptionRepository;
-    private final MqttClient mqttClient;
 
-    // Keep track of loadedSubscriptions as the MqttClient doesn't have functionality to get current loadedSubscriptions.
-    private final Set<String> loadedSubscriptions = new HashSet<>();
+    private final MqttService mqttService;
 
     @Autowired
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, MqttClient mqttClient) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, MqttService mqttService) {
         this.subscriptionRepository = subscriptionRepository;
-        this.mqttClient = mqttClient;
+        this.mqttService = mqttService;
     }
 
     public Subscription createSubscription(Subscription subscription) {
@@ -45,17 +38,17 @@ public class SubscriptionService {
 
     public void updateSubscription(Subscription subscription) {
         getSubscriptionRepository().save(subscription);
+        if (subscription.isActive()) {
+            mqttService.subscribe(subscription.getTopicName());
+        } else {
+            mqttService.unsubscribe(subscription.getTopicName());
+        }
     }
 
     public void deleteSubscription(Long id) {
         Subscription subscription = subscriptionRepository.findOne(id);
         getSubscriptionRepository().delete(id);
-        try {
-            mqttClient.unsubscribe(subscription.getTopicName());
-            loadedSubscriptions.remove(subscription.getTopicName());
-        } catch (MqttException e) {
-            LOG.error("Failed to unsubscribe {}. {}", subscription.getTopicName(), e);
-        }
+        mqttService.unsubscribe(subscription.getTopicName());
     }
 
     public Collection<Subscription> getAllSubscriptions() {
@@ -66,18 +59,10 @@ public class SubscriptionService {
         return getSubscriptionRepository().findOne(id);
     }
 
-    public void subscribeFromDatabase() {
+    public void reloadSubscriptions() {
         final List<Subscription> databaseSubscriptions = subscriptionRepository.findAll();
-        final List<Subscription> filteredSubs = databaseSubscriptions.stream()
-                .filter(dbSub ->
-                        loadedSubscriptions.contains(dbSub.getTopicName())).collect(Collectors.toList());
-        filteredSubs.forEach(filteredSub -> {
-            try {
-                mqttClient.subscribe(filteredSub.getTopicName());
-                loadedSubscriptions.add(filteredSub.getTopicName());
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
+        databaseSubscriptions.stream().filter(Subscription::isActive).forEach(databaseSubscription -> {
+            mqttService.subscribe(databaseSubscription.getTopicName());
         });
     }
 
@@ -85,11 +70,7 @@ public class SubscriptionService {
         return subscriptionRepository;
     }
 
-    public MqttClient getMqttClient() {
-        return mqttClient;
-    }
-
-    public Set<String> getLoadedSubscriptions() {
-        return loadedSubscriptions;
+    public MqttService getMqttService() {
+        return mqttService;
     }
 }

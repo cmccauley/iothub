@@ -3,6 +3,7 @@ package me.cmccauley.iothub.mqtt;
 import me.cmccauley.iothub.services.MqttMessageService;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class DefaultCallback implements MqttCallback {
     }
 
     @Override
-    public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage mqttMessage) throws Exception {
+    public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         LOG.info("Message received:\n\t" + new String(mqttMessage.getPayload()));
         mqttMessageService.handleCallbackMessage(topic, new String(mqttMessage.getPayload()));
     }

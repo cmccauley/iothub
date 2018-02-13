@@ -3,7 +3,6 @@ package me.cmccauley.iothub.web.api;
 import me.cmccauley.iothub.IothubApplication;
 import me.cmccauley.iothub.data.models.Topic;
 import me.cmccauley.iothub.data.repositories.TopicRepository;
-import me.cmccauley.iothub.services.TopicService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,9 +43,6 @@ public class TopicControllerTest {
 
     private MockMvc mockMvc;
 
-    private String topicName1 = "channel/savedTopic1";
-    private String topicName2 = "channel/savedTopic2";
-
     private Topic savedTopic1;
     private Topic savedTopic2;
 
@@ -56,9 +52,6 @@ public class TopicControllerTest {
     private TopicRepository topicRepository;
 
     @Autowired
-    private TopicService topicService;
-
-    @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Before
@@ -66,8 +59,8 @@ public class TopicControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 
-        this.savedTopic1 = topicRepository.save(new Topic(topicName1, Collections.EMPTY_SET));
-        this.savedTopic2 = topicRepository.save(new Topic(topicName2, Collections.EMPTY_SET));
+        this.savedTopic1 = topicRepository.save(new Topic("channel/savedTopic1", Collections.EMPTY_SET));
+        this.savedTopic2 = topicRepository.save(new Topic("channel/savedTopic2", Collections.EMPTY_SET));
     }
 
     @Test
@@ -92,14 +85,14 @@ public class TopicControllerTest {
     public void getTopicById() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/topics/" + savedTopic1.getId())).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(topicName1));
+        assertTrue(response.contains(savedTopic1.getName()));
     }
 
     @Test
     public void getAllTopics() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/topics")).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(topicName1) && response.contains(topicName2));
+        assertTrue(response.contains(savedTopic1.getName()) && response.contains(savedTopic2.getName()));
     }
 
     @Test
