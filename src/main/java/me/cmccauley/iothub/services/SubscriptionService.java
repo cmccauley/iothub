@@ -8,15 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class SubscriptionService {
     private final static Logger LOG = LoggerFactory.getLogger(SubscriptionService.class);
 
-    private final SubscriptionRepository subscriptionRepository;
+    private SubscriptionRepository subscriptionRepository;
 
-    private final MqttService mqttService;
+    private MqttService mqttService;
 
     @Autowired
     public SubscriptionService(SubscriptionRepository subscriptionRepository, MqttService mqttService) {
@@ -55,22 +54,19 @@ public class SubscriptionService {
         return subscriptionRepository.findAll();
     }
 
-    public Subscription getSubscription(Long id) {
-        return getSubscriptionRepository().findOne(id);
-    }
-
-    public void reloadSubscriptions() {
-        final List<Subscription> databaseSubscriptions = subscriptionRepository.findAll();
-        databaseSubscriptions.stream().filter(Subscription::isActive).forEach(databaseSubscription -> {
-            mqttService.subscribe(databaseSubscription.getTopicName());
-        });
-    }
-
     public SubscriptionRepository getSubscriptionRepository() {
         return subscriptionRepository;
     }
 
     public MqttService getMqttService() {
         return mqttService;
+    }
+
+    public void setSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+    }
+
+    public void setMqttService(MqttService mqttService) {
+        this.mqttService = mqttService;
     }
 }

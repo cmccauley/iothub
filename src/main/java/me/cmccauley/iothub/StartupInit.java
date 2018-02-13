@@ -1,6 +1,7 @@
 package me.cmccauley.iothub;
 
 import me.cmccauley.iothub.services.MqttService;
+import me.cmccauley.iothub.services.SubscriptionService;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,8 @@ public class StartupInit {
     private static final Logger LOG = LoggerFactory.getLogger(StartupInit.class);
 
     private final MqttService mqttService;
-
     @Autowired
-    public StartupInit(MqttService mqttService) {
+    public StartupInit(MqttService mqttService ) {
         this.mqttService = mqttService;
     }
 

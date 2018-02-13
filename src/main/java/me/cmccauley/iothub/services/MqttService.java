@@ -1,5 +1,7 @@
 package me.cmccauley.iothub.services;
 
+import me.cmccauley.iothub.data.models.Subscription;
+import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -8,19 +10,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MqttService {
     private final static Logger LOG = LoggerFactory.getLogger(MqttService.class);
 
     private final MqttClient mqttClient;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    public MqttService(MqttClient mqttClient) {
+    public MqttService(MqttClient mqttClient, SubscriptionRepository subscriptionRepository) {
         this.mqttClient = mqttClient;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
     public void start() throws MqttException {
         mqttClient.connect();
+        loadActiveSubscriptions();
     }
 
     public void publish(String topic, String message) {
@@ -45,6 +52,13 @@ public class MqttService {
         } catch (MqttException e) {
             LOG.warn("Error while unsubscribing to topic {}. {}", topic, e.getMessage());
         }
+    }
+
+    public void loadActiveSubscriptions() {
+        final List<Subscription> databaseSubscriptions = subscriptionRepository.findAll();
+        databaseSubscriptions.stream().filter(Subscription::isActive).forEach(databaseSubscription -> {
+            subscribe(databaseSubscription.getTopicName());
+        });
     }
 
     public MqttClient getMqttClient() {
