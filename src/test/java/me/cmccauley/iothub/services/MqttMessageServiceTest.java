@@ -42,7 +42,6 @@ public class MqttMessageServiceTest {
 
     @Before
     public void setup() {
-        mqttMessageService.setSubscriptionRepository(subscriptionRepository);
         mqttMessageService.setMqttMessageRepository(mqttMessageRepository);
         activeSubscription = new Subscription();
         activeSubscription.setTopicName("topic1");
