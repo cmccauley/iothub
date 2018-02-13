@@ -14,7 +14,6 @@ public class Topic {
     @Column(name = "name", unique = true)
     private String name;
 
-
     @ElementCollection
     private Set<String> parameterList;
 

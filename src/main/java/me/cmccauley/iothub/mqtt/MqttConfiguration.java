@@ -11,13 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MqttConfiguration {
 
+    private final MqttCallback defaultCallback;
     @Value("")
     private String username;
-
     @Value("")
     private String password;
-
-    private final MqttCallback defaultCallback;
 
     @Autowired
     public MqttConfiguration(MqttCallback defaultCallback) {
