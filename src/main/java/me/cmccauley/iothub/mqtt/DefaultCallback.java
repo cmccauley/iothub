@@ -14,7 +14,7 @@ public class DefaultCallback implements MqttCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCallback.class);
 
-    private final MqttMessageService mqttMessageService;
+    private MqttMessageService mqttMessageService;
 
     @Autowired
     public DefaultCallback(MqttMessageService mqttMessageService) {
@@ -35,5 +35,13 @@ public class DefaultCallback implements MqttCallback {
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+    }
+
+    public MqttMessageService getMqttMessageService() {
+        return mqttMessageService;
+    }
+
+    public void setMqttMessageService(MqttMessageService mqttMessageService) {
+        this.mqttMessageService = mqttMessageService;
     }
 }

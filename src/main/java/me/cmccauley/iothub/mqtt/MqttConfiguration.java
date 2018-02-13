@@ -12,10 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class MqttConfiguration {
 
     private final MqttCallback defaultCallback;
-    @Value("")
-    private String username;
-    @Value("")
-    private String password;
 
     @Autowired
     public MqttConfiguration(MqttCallback defaultCallback) {
