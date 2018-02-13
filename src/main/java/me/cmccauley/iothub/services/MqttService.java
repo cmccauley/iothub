@@ -16,8 +16,8 @@ import java.util.List;
 public class MqttService {
     private final static Logger LOG = LoggerFactory.getLogger(MqttService.class);
 
-    private final MqttClient mqttClient;
-    private final SubscriptionRepository subscriptionRepository;
+    private MqttClient mqttClient;
+    private SubscriptionRepository subscriptionRepository;
 
     @Autowired
     public MqttService(MqttClient mqttClient, SubscriptionRepository subscriptionRepository) {
@@ -65,4 +65,15 @@ public class MqttService {
         return mqttClient;
     }
 
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    public SubscriptionRepository getSubscriptionRepository() {
+        return subscriptionRepository;
+    }
+
+    public void setSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+    }
 }

@@ -14,7 +14,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.*;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
