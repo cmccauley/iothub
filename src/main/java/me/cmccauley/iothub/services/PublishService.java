@@ -14,8 +14,8 @@ import java.util.Map;
 public class PublishService {
     private final static Logger LOG = LoggerFactory.getLogger(PublishService.class);
 
-    private final MqttService mqttService;
-    private final TopicRepository topicRepository;
+    private MqttService mqttService;
+    private TopicRepository topicRepository;
 
     @Autowired
     public PublishService(MqttService mqttService, TopicRepository topicRepository) {
@@ -24,7 +24,7 @@ public class PublishService {
     }
 
     public void publish(Long topicId, Map<String, String> message) {
-        final Topic topic = topicRepository.getOne(topicId);
+        final Topic topic = topicRepository.findOne(topicId);
         if (isValid(topic, message)) {
             mqttService.publish(topic.getName(), convertToKeyValue(message));
         } else {
@@ -33,7 +33,7 @@ public class PublishService {
     }
 
     public void publishList(Long topicId, List<Map<String, String>> messageList) {
-        final Topic topic = topicRepository.getOne(topicId);
+        final Topic topic = topicRepository.findOne(topicId);
         // Validate the entire message before sending data.
         if (messageList.stream().anyMatch(message -> !isValid(topic, message))) {
             throw new RuntimeException("Publish message is invalid. Valid params:" + topic.getParameterList());
@@ -56,4 +56,19 @@ public class PublishService {
         return builder.toString();
     }
 
+    public MqttService getMqttService() {
+        return mqttService;
+    }
+
+    public void setMqttService(MqttService mqttService) {
+        this.mqttService = mqttService;
+    }
+
+    public TopicRepository getTopicRepository() {
+        return topicRepository;
+    }
+
+    public void setTopicRepository(TopicRepository topicRepository) {
+        this.topicRepository = topicRepository;
+    }
 }
