@@ -32,8 +32,8 @@ public class MqttMessageController {
     }
 
     @GetMapping("/subscription/{subscriptionId}")
-    public MqttMessage getMqttMessagesBySubscriptionId(@PathVariable(value = "subscriptionId") Long subscriptionId) {
-        return mqttMessageService.getMqttMessageBySubscriptionId(subscriptionId);
+    public Collection<MqttMessage> getMqttMessagesBySubscriptionId(@PathVariable(value = "subscriptionId") Long subscriptionId) {
+        return mqttMessageService.getMqttMessagesBySubscriptionId(subscriptionId);
     }
 
 }

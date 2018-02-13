@@ -15,8 +15,8 @@ import java.util.Collection;
 public class MqttMessageService {
     private final static Logger LOG = LoggerFactory.getLogger(MqttMessageService.class);
 
-    private final MqttMessageRepository mqttMessageRepository;
-    private final SubscriptionRepository subscriptionRepository;
+    private MqttMessageRepository mqttMessageRepository;
+    private SubscriptionRepository subscriptionRepository;
 
     @Autowired
     public MqttMessageService(MqttMessageRepository mqttMessageRepository, SubscriptionRepository subscriptionRepository) {
@@ -41,11 +41,27 @@ public class MqttMessageService {
         return mqttMessageRepository.findOne(subscriptionId);
     }
 
-    public MqttMessage getMqttMessageBySubscriptionId(Long subscriptionId) {
-        return mqttMessageRepository.findOne(subscriptionId);
+    public Collection<MqttMessage> getMqttMessagesBySubscriptionId(Long subscriptionId) {
+        return mqttMessageRepository.findAllBySubscriptionId(subscriptionId);
     }
 
     public Collection<MqttMessage> getAllMqttMessages() {
         return mqttMessageRepository.findAll();
+    }
+
+    public MqttMessageRepository getMqttMessageRepository() {
+        return mqttMessageRepository;
+    }
+
+    public void setMqttMessageRepository(MqttMessageRepository mqttMessageRepository) {
+        this.mqttMessageRepository = mqttMessageRepository;
+    }
+
+    public SubscriptionRepository getSubscriptionRepository() {
+        return subscriptionRepository;
+    }
+
+    public void setSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
     }
 }
