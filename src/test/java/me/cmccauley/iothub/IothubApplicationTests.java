@@ -12,14 +12,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DataJpaTest
 public class IothubApplicationTests {
 
-	@Autowired
-	private TestEntityManager entityManager;
+    @Autowired
+    private TestEntityManager entityManager;
 
-	@Autowired
-	private MqttMessageRepository employeeRepository;
+    @Autowired
+    private MqttMessageRepository employeeRepository;
 
-	@Test
-	public void contextLoads() {
-	}
+    @Test
+    public void contextLoads() {
+    }
 
 }

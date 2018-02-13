@@ -1,21 +1,33 @@
 package me.cmccauley.iothub.data.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "subscription", schema = "iothub")
 public class Subscription {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "topicName")
+    @Column(name = "topic_name", nullable = false)
     private String topicName;
 
-    @Column(name = "active")
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<MqttMessage> mqttMessages;
+
+    @Column(name = "active", nullable = false)
     private boolean active;
+
+    public Subscription() {
+    }
 
     public Subscription(String topicName, boolean active) {
         this.topicName = topicName;
@@ -36,6 +48,14 @@ public class Subscription {
 
     public void setTopicName(String topicName) {
         this.topicName = topicName;
+    }
+
+    public Set<MqttMessage> getMqttMessages() {
+        return mqttMessages;
+    }
+
+    public void setMqttMessages(Set<MqttMessage> mqttMessages) {
+        this.mqttMessages = mqttMessages;
     }
 
     public boolean isActive() {

@@ -10,7 +10,7 @@ services:
   mqtt:
     image: eclipse-mosquitto
     ports:
-      - "1884:1883"
+      - "1883:1883"
     volumes:
       - ./mqtt/mosquitto/config:/mosquitto/config
       - ./mqtt/mosquitto/data:/mosquitto/data

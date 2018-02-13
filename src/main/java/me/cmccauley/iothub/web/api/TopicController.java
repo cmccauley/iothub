@@ -1,7 +1,7 @@
 package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.data.models.Topic;
-import me.cmccauley.iothub.services.TopicService;
+import me.cmccauley.iothub.data.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +16,16 @@ import java.util.Optional;
 @RequestMapping("/topics")
 public class TopicController {
 
-    private final TopicService topicService;
+    private final TopicRepository topicRepository;
 
     @Autowired
-    public TopicController(TopicService topicService) {
-        this.topicService = topicService;
+    public TopicController(TopicRepository topicRepository) {
+        this.topicRepository = topicRepository;
     }
 
     @PostMapping
     public ResponseEntity<?> createTopic(@Valid @RequestBody Topic topic) {
-        final Topic createdTopic = topicService.createTopic(topic);
+        final Topic createdTopic = topicRepository.save(topic);
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createdTopic.getId()).toUri();
@@ -36,18 +36,18 @@ public class TopicController {
     @GetMapping("{topicId}")
     public ResponseEntity<Topic> getTopicById(@PathVariable(value = "topicId") Long topicId) {
         return Optional
-                .ofNullable(topicService.getTopicById(topicId))
+                .ofNullable(topicRepository.findOne(topicId))
                 .map(topic -> ResponseEntity.ok().body(topic))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public Collection<Topic> getAllTopics() {
-        return topicService.getAllTopics();
+        return topicRepository.findAll();
     }
 
-    @DeleteMapping
-    public void deleteTopic(Long topicId) {
-        topicService.deleteTopic(topicId);
+    @DeleteMapping("{topicId}")
+    public void deleteTopic(@PathVariable(value = "topicId") Long topicId) {
+        topicRepository.delete(topicId);
     }
 }

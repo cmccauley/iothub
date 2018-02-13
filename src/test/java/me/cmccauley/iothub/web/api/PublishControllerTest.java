@@ -2,8 +2,9 @@ package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.IothubApplication;
 import me.cmccauley.iothub.data.models.Subscription;
+import me.cmccauley.iothub.data.models.Topic;
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
-import me.cmccauley.iothub.services.SubscriptionService;
+import me.cmccauley.iothub.data.repositories.TopicRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,42 +18,35 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IothubApplication.class)
 @WebAppConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class SubscriptionControllerTest {
+public class PublishControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
 
+
     private MockMvc mockMvc;
-
-    private Subscription savedSubscription1;
-    private Subscription savedSubscription2;
-
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private Topic savedTopic1;
 
     @Autowired
-    private SubscriptionService subscriptionService;
+    private TopicRepository topicRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -61,45 +55,51 @@ public class SubscriptionControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        this.savedSubscription1 = subscriptionRepository.save(new Subscription("channel/savedSubscription1", true));
-        this.savedSubscription2 = subscriptionRepository.save(new Subscription("channel/savedSubscription2", false));
+        Topic topic = new Topic();
+        Set<String> params = new HashSet<>();
+        params.add("a");
+        params.add("b");
+        params.add("c");
+        topic.setName("topic1");
+        topic.setParameterList(params);
+        this.savedTopic1 = topicRepository.save(topic);
     }
 
     @Test
-    public void subscriptionNotFound() throws Exception {
-        mockMvc.perform(get("/subscriptions/123")).andDo(print()).andExpect(status().isNotFound());
-    }
+    public void publishMessage() throws Exception {
+        Map<String, String> message = new HashMap<>();
+        message.put("a", "123");
+        message.put("b", "123");
+        message.put("c", "123");
 
-    @Test
-    public void createSubscription() throws Exception {
-        Subscription createdSubscription = new Subscription("createdSubscription", true);
-        String subscriptionJson = json(createdSubscription);
-
-        MvcResult mvcResult = mockMvc.perform(post("/subscriptions")
+        mockMvc.perform(post("/publish/topic/" + savedTopic1.getId())
                 .contentType(contentType)
-                .content(subscriptionJson))
-                .andExpect(status().isCreated()).andReturn();
-        String location = mvcResult.getResponse().getHeader("location");
-        assertTrue(location.contains("/subscriptions"));
+                .content(json(message)))
+                .andExpect(status().isAccepted());
     }
 
     @Test
-    public void getSubscriptionById() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/subscriptions/" + savedSubscription1.getId())).andExpect(status().isOk()).andReturn();
-        String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(savedSubscription1.getTopicName()));
-    }
+    public void publishMessageList() throws Exception {
+        List<Map<String, String>> messageList = new ArrayList<>();
 
-    @Test
-    public void getAllSubscriptions() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/subscriptions")).andExpect(status().isOk()).andReturn();
-        String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(savedSubscription1.getTopicName()) && response.contains(savedSubscription2.getTopicName()));
-    }
+        Map<String, String> message1 = new HashMap<>();
+        message1.put("a", "123");
+        message1.put("b", "123");
+        message1.put("c", "123");
 
-    @Test
-    public void deleteSubscription() throws Exception {
-        mockMvc.perform(delete("/subscriptions/" + savedSubscription1.getId())).andExpect(status().isOk());
+        Map<String, String> message2 = new HashMap<>();
+        message2.put("a", "456");
+        message2.put("b", "456");
+        message2.put("c", "456");
+
+        messageList.add(message1);
+        messageList.add(message2);
+
+
+        mockMvc.perform(post("/publish/topic/" + savedTopic1.getId() + "/list")
+                .contentType(contentType)
+                .content(json(messageList)))
+                .andExpect(status().isAccepted());
     }
 
     @Autowired
@@ -120,5 +120,4 @@ public class SubscriptionControllerTest {
                 o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
     }
-
 }

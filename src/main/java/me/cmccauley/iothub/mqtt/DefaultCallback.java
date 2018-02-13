@@ -1,16 +1,20 @@
 package me.cmccauley.iothub.mqtt;
 
-import me.cmccauley.iothub.data.models.MqttMessage;
 import me.cmccauley.iothub.services.MqttMessageService;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultCallback implements MqttCallback {
 
-    private final MqttMessageService mqttMessageService;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCallback.class);
+
+    private MqttMessageService mqttMessageService;
 
     @Autowired
     public DefaultCallback(MqttMessageService mqttMessageService) {
@@ -23,13 +27,21 @@ public class DefaultCallback implements MqttCallback {
     }
 
     @Override
-    public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage mqttMessage) throws Exception {
-        System.out.println("Message received:\n\t" + new String(mqttMessage.getPayload()));
-        mqttMessageService.addMessage(new MqttMessage(topic, new String(mqttMessage.getPayload())));
+    public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+        LOG.info("Message received:\n\t" + new String(mqttMessage.getPayload()));
+        mqttMessageService.handleCallbackMessage(topic, new String(mqttMessage.getPayload()));
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+    }
+
+    public MqttMessageService getMqttMessageService() {
+        return mqttMessageService;
+    }
+
+    public void setMqttMessageService(MqttMessageService mqttMessageService) {
+        this.mqttMessageService = mqttMessageService;
     }
 }

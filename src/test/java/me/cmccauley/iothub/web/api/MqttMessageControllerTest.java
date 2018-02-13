@@ -1,9 +1,10 @@
 package me.cmccauley.iothub.web.api;
 
 import me.cmccauley.iothub.IothubApplication;
+import me.cmccauley.iothub.data.models.MqttMessage;
 import me.cmccauley.iothub.data.models.Subscription;
+import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
-import me.cmccauley.iothub.services.SubscriptionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,15 +28,14 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IothubApplication.class)
 @WebAppConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class SubscriptionControllerTest {
+public class MqttMessageControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -44,7 +44,9 @@ public class SubscriptionControllerTest {
     private MockMvc mockMvc;
 
     private Subscription savedSubscription1;
-    private Subscription savedSubscription2;
+
+    private MqttMessage savedMqttMessage1;
+    private MqttMessage savedMqttMessage2;
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
@@ -52,7 +54,7 @@ public class SubscriptionControllerTest {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    private SubscriptionService subscriptionService;
+    private MqttMessageRepository mqttMessageRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -62,44 +64,30 @@ public class SubscriptionControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         this.savedSubscription1 = subscriptionRepository.save(new Subscription("channel/savedSubscription1", true));
-        this.savedSubscription2 = subscriptionRepository.save(new Subscription("channel/savedSubscription2", false));
+
+        this.savedMqttMessage1 = mqttMessageRepository.save(new MqttMessage(this.savedSubscription1, "message1"));
+        this.savedMqttMessage2 = mqttMessageRepository.save(new MqttMessage(this.savedSubscription1, "message2"));
     }
 
     @Test
-    public void subscriptionNotFound() throws Exception {
-        mockMvc.perform(get("/subscriptions/123")).andDo(print()).andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void createSubscription() throws Exception {
-        Subscription createdSubscription = new Subscription("createdSubscription", true);
-        String subscriptionJson = json(createdSubscription);
-
-        MvcResult mvcResult = mockMvc.perform(post("/subscriptions")
-                .contentType(contentType)
-                .content(subscriptionJson))
-                .andExpect(status().isCreated()).andReturn();
-        String location = mvcResult.getResponse().getHeader("location");
-        assertTrue(location.contains("/subscriptions"));
-    }
-
-    @Test
-    public void getSubscriptionById() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/subscriptions/" + savedSubscription1.getId())).andExpect(status().isOk()).andReturn();
+    public void getMqttMessageById() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/" + savedMqttMessage1.getId())).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(savedSubscription1.getTopicName()));
+        assertTrue(response.contains(savedMqttMessage1.getMessage()));
     }
 
     @Test
-    public void getAllSubscriptions() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/subscriptions")).andExpect(status().isOk()).andReturn();
+    public void getAllMqttMessages() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/")).andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertTrue(response.contains(savedSubscription1.getTopicName()) && response.contains(savedSubscription2.getTopicName()));
+        assertTrue(response.contains(savedMqttMessage1.getMessage()) && response.contains(savedMqttMessage2.getMessage()));
     }
 
     @Test
-    public void deleteSubscription() throws Exception {
-        mockMvc.perform(delete("/subscriptions/" + savedSubscription1.getId())).andExpect(status().isOk());
+    public void getMqttMessageBySubscriptionId() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/mqttmessages/subscription/" + savedSubscription1.getId())).andExpect(status().isOk()).andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        assertTrue(response.contains(savedMqttMessage1.getMessage()));
     }
 
     @Autowired
@@ -120,5 +108,4 @@ public class SubscriptionControllerTest {
                 o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
     }
-
 }
