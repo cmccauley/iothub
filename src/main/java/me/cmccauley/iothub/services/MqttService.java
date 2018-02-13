@@ -27,6 +27,7 @@ public class MqttService {
 
     public void start() throws MqttException {
         mqttClient.connect();
+        mqttClient.subscribe("/announce/#");
         loadActiveSubscriptions();
     }
 

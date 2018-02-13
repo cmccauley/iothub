@@ -1,19 +1,20 @@
 package me.cmccauley.iothub.mqtt;
 
 import me.cmccauley.iothub.IothubApplication;
-import me.cmccauley.iothub.services.MqttMessageService;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import me.cmccauley.iothub.mqtt.impl.AnnounceMessageHandler;
+import me.cmccauley.iothub.mqtt.impl.DataMessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -21,25 +22,46 @@ import static org.mockito.Mockito.*;
 @WebAppConfiguration
 public class DefaultCallbackTest {
 
-    @InjectMocks
     private DefaultCallback defaultCallBack;
 
     @Mock
-    private MqttMessageService mqttMessageService;
+    private AnnounceMessageHandler announceMessageHandler;
+
+    @Mock
+    private DataMessageHandler dataMessageHandler;
+
+    private Map<String, CallbackMessageHandler> callbackStrategies = new HashMap<>();
 
     @Before
     public void setup() {
-        defaultCallBack.setMqttMessageService(mqttMessageService);
+        defaultCallBack = new DefaultCallback(callbackStrategies);
+
+        callbackStrategies.put("dataMessageHandler", dataMessageHandler);
+        callbackStrategies.put("announceMessageHandler", announceMessageHandler);
+        defaultCallBack.setCallbackStrategies(callbackStrategies);
     }
 
     @Test
-    public void messageArrived() throws Exception {
-        doNothing().when(mqttMessageService).handleCallbackMessage("topic1", "message1");
-
+    public void dataMessageArrived() throws Exception {
         MqttMessage pahoMqttMessage = new MqttMessage();
-        pahoMqttMessage.setPayload("message1".getBytes());
-        defaultCallBack.messageArrived("topic1", pahoMqttMessage);
+        pahoMqttMessage.setPayload("abc".getBytes());
 
-        verify(mqttMessageService, times(1)).handleCallbackMessage("topic1", "message1");
+        doNothing().when(dataMessageHandler).handleCallbackMessage(any(), any());
+
+        defaultCallBack.messageArrived("/abc", pahoMqttMessage);
+
+        verify(dataMessageHandler, times(1)).handleCallbackMessage(any(), any());
+    }
+
+    @Test
+    public void announcementMessageArrived() throws Exception {
+        MqttMessage pahoMqttMessage = new MqttMessage();
+        pahoMqttMessage.setPayload("a,b,c".getBytes());
+
+        defaultCallBack.messageArrived("/announcement/abc", pahoMqttMessage);
+
+        doNothing().when(announceMessageHandler).handleCallbackMessage(any(), any());
+
+        verify(announceMessageHandler, times(1)).handleCallbackMessage(any(), any());
     }
 }

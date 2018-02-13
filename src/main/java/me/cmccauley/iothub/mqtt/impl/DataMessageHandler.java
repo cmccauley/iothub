@@ -1,43 +1,40 @@
-package me.cmccauley.iothub.services;
+package me.cmccauley.iothub.mqtt.impl;
 
 import me.cmccauley.iothub.data.models.MqttMessage;
 import me.cmccauley.iothub.data.models.Subscription;
 import me.cmccauley.iothub.data.repositories.MqttMessageRepository;
 import me.cmccauley.iothub.data.repositories.SubscriptionRepository;
+import me.cmccauley.iothub.mqtt.CallbackMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
-@Service
-public class MqttMessageService {
-    private final static Logger LOG = LoggerFactory.getLogger(MqttMessageService.class);
+@Component
+public class DataMessageHandler implements CallbackMessageHandler {
+    private final static Logger LOG = LoggerFactory.getLogger(DataMessageHandler.class);
 
     private MqttMessageRepository mqttMessageRepository;
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    public MqttMessageService(MqttMessageRepository mqttMessageRepository, SubscriptionRepository subscriptionRepository) {
+    public DataMessageHandler(MqttMessageRepository mqttMessageRepository, SubscriptionRepository subscriptionRepository) {
         this.mqttMessageRepository = mqttMessageRepository;
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public void handleCallbackMessage(String topic, String receivedMessage) {
-
-    }
-
-    public MqttMessage getMqttMessageById(Long subscriptionId) {
-        return mqttMessageRepository.findOne(subscriptionId);
-    }
-
-    public Collection<MqttMessage> getMqttMessagesBySubscriptionId(Long subscriptionId) {
-        return mqttMessageRepository.findAllBySubscriptionId(subscriptionId);
-    }
-
-    public Collection<MqttMessage> getAllMqttMessages() {
-        return mqttMessageRepository.findAll();
+    @Override
+    public void handleCallbackMessage(String topicName, org.eclipse.paho.client.mqttv3.MqttMessage pahoMqttMessage) {
+        final Subscription subscription = subscriptionRepository.findByTopicNameAndActiveTrue(topicName);
+        if (subscription != null) {
+            String message = new String(pahoMqttMessage.getPayload());
+            final MqttMessage mqttMessage = new MqttMessage();
+            mqttMessage.setSubscription(subscription);
+            mqttMessage.setMessage(message);
+            mqttMessageRepository.save(mqttMessage);
+        } else {
+            LOG.error("Message received for a topic that was not found in the system. Topic:{}, Message:{}", topicName, pahoMqttMessage);
+        }
     }
 
     public MqttMessageRepository getMqttMessageRepository() {
