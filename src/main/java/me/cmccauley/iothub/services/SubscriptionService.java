@@ -24,7 +24,11 @@ public class SubscriptionService {
     }
 
     public Subscription createSubscription(Subscription subscription) {
-        return getSubscriptionRepository().save(subscription);
+        Subscription savedSubscription = subscriptionRepository.save(subscription);
+        if(subscription.isActive()){
+            mqttService.subscribe(subscription.getTopicName());
+        }
+        return savedSubscription;
     }
 
     public Subscription getSubscriptionById(Long id) {

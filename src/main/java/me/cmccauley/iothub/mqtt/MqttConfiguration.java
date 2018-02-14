@@ -20,7 +20,7 @@ public class MqttConfiguration {
 
     @Bean
     public MqttClient mqttClient() throws MqttException {
-        MqttClient mqttClient = new MqttClient("tcp://localhost:1884", "iothub");
+        MqttClient mqttClient = new MqttClient("tcp://mqtt:1883", "iothub");
         mqttClient.setCallback(defaultCallback);
         return mqttClient;
     }
