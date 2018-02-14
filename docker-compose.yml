@@ -5,7 +5,8 @@ services:
     ports:
      - "8080:8080"
     links:
-     - mqtt   
+      - db
+      - mqtt
   
   mqtt:
     image: eclipse-mosquitto
@@ -14,11 +15,15 @@ services:
     volumes:
       - ./mqtt/mosquitto/config:/mosquitto/config
       - ./mqtt/mosquitto/data:/mosquitto/data
-    links:
-     - db
-     
+
   db:
     image: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: iothub
+    volumes:
+     - iothub-mysql-data-volume:/var/lib/mysql
+
+volumes:
+  iothub-mysql-data-volume:
